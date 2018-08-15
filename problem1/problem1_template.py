@@ -13,6 +13,8 @@
 ##                                                                            ##
 ## DO NOT CHANGE THE NAME OF THE FUNCTION BELOW. ONLY FILL IN THE LOGIC.      ##
 ## DONT FORGET TO RETURN THE VALUES AS A LIST                                 ##
+## IF YOU MAKE ANY IMPORTS PUT THEM IN THE BODY OF THE FUNCTION               ##
+##                                                                            ##
 ## You are free to write additional helper functions but ensure they are all  ##
 ## in this file else your submission wont work.                               ##
 ##                                                                            ##
