@@ -144,9 +144,8 @@ class MyTradingParams(TradingSystemParameters):
     def getMarketFeatureConfigDicts(self):
     # ADD RELEVANT FEATURES HERE
         scoreDict = {'featureKey': 'score',
-                     'featureId': 'score_ll',
-                     'params': {'featureName': self.getPriceFeatureKey(),
-                                'instrument_score_feature': 'benchmark'}}
+                     'featureId': 'ScoreCalculator',
+                     'params': {'instrument_score_feature': 'score'}}
 
         marketFeatureConfigs = self.__tradingFunctions.getMarketFeatureConfigDicts()
         return marketFeatureConfigs + [scoreDict] +self.__additionalMarketFeatureConfigDicts
@@ -220,7 +219,6 @@ class MyTradingParams(TradingSystemParameters):
 
     def setAdditionalMarketFeatureConfigDicts(self, dicts = []):
         self.__additionalMarketFeatureConfigDicts = dicts
-
 
 class TrainingPredictionFeature(Feature):
 
@@ -324,7 +322,25 @@ class ScoreCalculator(Feature):
             scoreDict = instrumentLookbackData.getFeatureDf(featureKey)
             oldscore = scoreDict.iloc[-1]
             newscore = ranks2.corr(ranks)
+            
             score = (oldscore*(updateNum-1)+newscore)/(updateNum)
+        return score
+
+    '''
+    Computing for Market. By default defers to computeForLookbackData
+    '''
+    @classmethod
+    def computeForMarket(cls, updateNum, time, featureParams, featureKey, currentMarketFeatures, instrumentManager):
+        score = 0
+        scoreDict = instrumentManager.getDataDf()[featureKey]
+        scoreKey = 'score'
+        if 'instrument_score_feature' in featureParams:
+            scoreKey = featureParams['instrument_score_feature']
+        if len(scoreDict) < 1:
+            return 0
+        instrumentLookbackData = instrumentManager.getLookbackInstrumentFeatures()
+        score = instrumentLookbackData.getFeatureDf(scoreKey).iloc[-1].mean()
+        allInstruments = instrumentManager.getAllInstrumentsByInstrumentId()
         return score
 
 
